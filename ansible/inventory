@@ -1,0 +1,32 @@
+all:
+  hosts:
+    app01:
+      ansible_host: XXX.XXX.XXX.XXX
+      ansible_user: ubuntu
+      ansible_ssh_private_key_file: vprofile-dev-key.pem
+    db01:
+      ansible_host: XXX.XXX.XXX.XXX
+      ansible_user: ec2-user
+      ansible_ssh_private_key_file: vprofile-dev-key.pem
+    rmq01:
+      ansible_host: XXX.XXX.XXX.XXX
+      ansible_user: ec2-user
+      ansible_ssh_private_key_file: vprofile-dev-key.pem
+    mc01:
+      ansible_host: XXX.XXX.XXX.XXX
+      ansible_user: ec2-user
+      ansible_ssh_private_key_file: vprofile-dev-key.pem
+ 
+  children:
+    appservers:
+      hosts:
+        app01:
+    dbservers:
+      hosts:
+        db01:
+    rabbitmqsrv:
+      hosts:
+        rmq01:
+    memcachedserv:
+      hosts:
+        mc01:

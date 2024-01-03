@@ -1,0 +1,41 @@
+---
+- hosts: memcachedserv
+  become: yes
+  vars_files:
+    - group_vars/mc_vars.yaml
+
+  tasks:
+    - name: Install required packages
+      yum:
+        name: "{{ packages }}"
+        state: present
+      tags:
+        - packages
+    
+    - name: Start and enable memcached service
+      systemd:
+        name: memcached
+        state: started
+        enabled: yes
+      tags:
+        - memcached
+
+    - name: Update memcached config to allow external access
+      lineinfile:
+        path: "{{ memcached_config_path }}"
+        regexp: '^OPTIONS='
+        line: "{{ memcached_options }}"
+      tags:
+        - memcached_config
+
+    - name: Restart memcached service with updated configuration
+      systemd:
+        name: memcached
+        state: restarted
+      tags:
+        - memcached_restart
+
+    - name: Run memcached service
+      command: "{{ memcached_run_command }}"
+      tags:
+        - memcached_run

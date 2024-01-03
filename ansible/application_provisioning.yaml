@@ -1,0 +1,5 @@
+---
+- import_playbook: db.yaml
+- import_playbook: mc.yaml
+- import_playbook: rbmq.yaml
+- import_playbook: app.yaml

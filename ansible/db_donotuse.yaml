@@ -1,0 +1,79 @@
+---
+- name: Configure and setup MariaDB
+  hosts: your_server_ip
+  become: true
+  vars:
+    database_pass: "admin123"
+  tasks:
+    - name: Update system packages
+      yum:
+        name: "*"
+        state: latest
+      become: true
+
+    - name: Install required packages
+      yum:
+        name: "{{ item }}"
+        state: present
+      become: true
+      loop:
+        - epel-release
+        - git
+        - zip
+        - unzip
+        - mariadb-server
+
+    - name: Start and enable MariaDB
+      systemd:
+        name: mariadb
+        state: started
+        enabled: true
+
+    - name: Clone vprofile-project repository
+      git:
+        repo: "https://github.com/hkhcoder/vprofile-project.git"
+        dest: "/tmp/vprofile-project"
+        version: main
+
+    - name: Secure MariaDB installation
+      mysql_user:
+        name: root
+        password: "{{ database_pass }}"
+        login_unix_socket: yes
+        check_implicit_admin: yes
+        state: present
+
+    - name: Create database and user
+      mysql_db:
+        name: accounts
+        state: present
+        login_user: root
+        login_password: "{{ database_pass }}"
+
+    - name: Grant privileges to the database
+      mysql_user:
+        name: admin
+        host: "{{ item }}"
+        password: "admin123"
+        priv: "accounts.*:ALL"
+        state: present
+        login_user: root
+        login_password: "{{ database_pass }}"
+      loop:
+        - localhost
+        - '%'
+
+    - name: Import SQL dump to database
+      command: "mysql -u root -p{{ database_pass }} accounts < /tmp/vprofile-project/src/main/resources/db_backup.sql"
+
+    - name: Flush privileges
+      mysql_db:
+        name: "accounts"
+        state: flush
+        login_user: root
+        login_password: "{{ database_pass }}"
+
+    - name: Restart MariaDB service
+      systemd:
+        name: mariadb
+        state: restarted

@@ -1,0 +1,61 @@
+---
+- name: Install and configure RabbitMQ server
+  hosts: rabbitmqsrv
+  become: true
+  vars_files:
+    - group_vars/rbmq_vars.yaml
+
+  tasks:
+    - name: Install required packages
+      yum:
+        name: "{{ rbmq_packages }}"
+        state: present
+        update_cache: yes
+      tags:
+        - packages
+    
+    - name: Install centos-release-rabbitmq-38 package
+      dnf:
+        name: centos-release-rabbitmq-38
+        state: present
+
+    - name: Install rabbitmq-server
+      dnf:
+        name: rabbitmq-server
+        state: present
+        enablerepo: centos-rabbitmq-38
+
+    - name: Enable and start RabbitMQ server
+      systemd:
+        name: rabbitmq-server
+        enabled: yes
+        state: started
+      tags:
+        - rabbitmq
+
+    - name: Ensure RabbitMQ configuration file exists with loopback_users setting
+      copy:
+        content: "{{ rbmq_rabbitmq_config_content }}"
+        dest: "{{ rbmq_rabbitmq_config_path }}"
+        mode: 0644
+      tags:
+        - rabbitmq_config
+
+    - name: Add RabbitMQ user if not exists
+      command: "{{ rbmq_rabbitmq_user_command }}"
+      ignore_errors: yes
+      tags:
+        - rabbitmq_user
+
+    - name: Set tags for RabbitMQ user if user exists
+      command: "{{ rbmq_rabbitmq_user_tags_command }}"
+      ignore_errors: yes
+      tags:
+        - rabbitmq_user_tags
+
+    - name: Restart RabbitMQ service
+      systemd:
+        name: rabbitmq-server
+        state: restarted
+      tags:
+        - rabbitmq_restart

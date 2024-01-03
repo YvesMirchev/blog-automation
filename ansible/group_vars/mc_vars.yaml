@@ -1,0 +1,8 @@
+# group_vars/mc_vars.yaml
+packages:
+  - epel-release
+  - memcached
+
+memcached_config_path: "/etc/sysconfig/memcached"
+memcached_options: 'OPTIONS="-l 0.0.0.0"'
+memcached_run_command: "memcached -p 11211 -U 11111 -u memcached -d"

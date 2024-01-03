@@ -1,0 +1,10 @@
+openjdk_package: openjdk-11-jdk
+
+tomcat_packages:
+  - tomcat9
+  - tomcat9-admin
+  - tomcat9-docs
+  - tomcat9-common
+  - git
+
+awscli_package: awscli

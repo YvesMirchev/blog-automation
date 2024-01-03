@@ -1,0 +1,26 @@
+---
+- hosts: appservers
+  become: yes
+  vars_files:
+    - group_vars/app_vars.yaml
+
+  tasks:
+    - name: Update and upgrade packages
+      apt:
+        update_cache: yes
+        upgrade: safe
+
+    - name: Install OpenJDK 11
+      apt:
+        name: "{{ openjdk_package }}"
+        state: present
+
+    - name: Install Tomcat 9 and related packages
+      apt:
+        name: "{{ tomcat_packages }}"
+        state: present
+
+    - name: Install AWS CLI
+      apt:
+        name: "{{ awscli_package }}"
+        state: present

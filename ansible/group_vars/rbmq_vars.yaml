@@ -1,0 +1,13 @@
+# group_vars/rbmq_vars.yaml
+rbmq_packages:
+  - epel-release
+  - wget
+  - centos-release-rabbitmq-38
+  - rabbitmq-server
+
+rbmq_rabbitmq_config_content: "[{rabbit, [{loopback_users, []}]}]."
+rbmq_rabbitmq_config_path: "/etc/rabbitmq/rabbitmq.config"
+rbmq_rabbitmq_config_mode: "0644"
+
+rbmq_rabbitmq_user_command: "rabbitmqctl add_user test test"
+rbmq_rabbitmq_user_tags_command: "rabbitmqctl set_user_tags test administrator"
