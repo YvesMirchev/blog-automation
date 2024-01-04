@@ -14,4 +14,4 @@ small_instance_size = "t2.small"
 centos_9_ami        = "ami-0df2a11dd1fe1f8e3"
 ubuntu_20_ami       = "ami-06aa3f7caf3a30282"
 
-my_public_ip = "46.233.54.43/32"
+my_public_ip = "XXX.XXX.XXX.XXX/32"
