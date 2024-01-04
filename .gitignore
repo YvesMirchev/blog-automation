@@ -1,0 +1,12 @@
+# Ignore .DS_Store files
+.DS_Store
+
+# Ignore logs
+/logs/
+
+# Ignore compiled files
+*.class
+
+# Ignore sensitive data
+secret.txt
+
